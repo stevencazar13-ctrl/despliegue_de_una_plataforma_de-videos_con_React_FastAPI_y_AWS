@@ -1,0 +1,125 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.login-box {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #202124;
+  font-size: 1.5rem;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #5f6368;
+  font-size: 0.9rem;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dadce0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #1a73e8;
+  outline: none;
+}
+
+.login-box .btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.login-box .btn-submit:hover {
+  background-color: #1557b0;
+}
+
+.toggle-section {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #1a73e8;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.toggle-btn:hover {
+  text-decoration: underline;
+}
+
+.login-container {
+  padding: 24px;
+  background: linear-gradient(145deg, #eef4f9 0%, #f7f8fa 58%, #f3f6f7 100%);
+}
+
+.login-box {
+  padding: 40px 36px;
+  border: 1px solid #e6eaf0;
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(31, 50, 77, 0.1);
+}
+
+.login-box h2 {
+  color: #202b3c;
+}
+
+.input-group input {
+  border-color: #d8dee8;
+  border-radius: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group input:focus {
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12);
+}
+
+.login-box .btn-submit {
+  border-radius: 8px;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.login-box .btn-submit:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 32px 24px;
+  }
+}
