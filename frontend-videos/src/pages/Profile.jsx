@@ -1,38 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import '../css/usuario.css';
+import React, { useState, useEffect } from 'react';
 
-export default function Profile() {
-  const navigate = useNavigate();
+const Profile = () => {
   const [user, setUser] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
-  
   const [uploadData, setUploadData] = useState({ title: '', description: '' });
-  
   const [videoFile, setVideoFile] = useState(null);
   const [thumbFile, setThumbFile] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/');
-      return;
-    }
+    const fetchUser = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
 
-    const fetchProfile = async () => {
       try {
-        const res = await fetch('http://localhost:8000/users/1'); 
+        const res = await fetch('http://localhost:8000/users/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (res.ok) {
           const data = await res.json();
           setUser(data);
         }
       } catch (error) {
-        console.error("Error al cargar perfil:", error);
+        console.error("Error cargando perfil:", error);
       }
     };
-
-    fetchProfile();
-  }, [navigate]);
+    fetchUser();
+  }, []);
 
   const handleUploadSubmit = async (e) => {
     e.preventDefault();
@@ -44,8 +37,8 @@ export default function Profile() {
 
     try {
       const videoUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${videoFile.name}&file_type=${videoFile.type}&is_video=true`, {
-  headers: { 'Authorization': `Bearer ${token}` }
-});
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       const videoUrls = await videoUrlRes.json();
 
       await fetch(videoUrls.upload_url, {
@@ -54,7 +47,7 @@ export default function Profile() {
         body: videoFile
       });
 
-      const thumbUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${thumbFile.name}&file_type=${thumbFile.type}`, {
+      const thumbUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${thumbFile.name}&file_type=${thumbFile.type}&is_video=false`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const thumbUrls = await thumbUrlRes.json();
@@ -87,103 +80,85 @@ export default function Profile() {
         setVideoFile(null);
         setThumbFile(null);
         
-        const userRes = await fetch('http://localhost:8000/users/1');
+        const userRes = await fetch('http://localhost:8000/users/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         if (userRes.ok) setUser(await userRes.json());
+      } else {
+        alert('Error al guardar el registro en la base de datos.');
       }
     } catch (error) {
       console.error("Error al subir a S3:", error);
-      alert('Hubo un error en la subida. Verifica los permisos CORS de tu Bucket S3.');
+      alert('Hubo un error en la subida. Verifica los permisos CORS de tus Buckets S3.');
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-  };
-
-  if (!user) return <p>Cargando perfil...</p>;
+  if (!user) return <div>Cargando perfil...</div>;
 
   return (
     <div className="profile-container">
-      <nav className="navbar">
-        <Link to="/home">Volver al Inicio</Link>
-        <button onClick={logout} className="logout-btn">Cerrar Sesión</button>
-      </nav>
+      <h2>Perfil de {user.username}</h2>
+      <button onClick={() => setShowUpload(!showUpload)}>
+        {showUpload ? 'Cancelar Subida' : 'Subir Nuevo Video'}
+      </button>
 
-      <div className="profile-header">
-        <h1>Perfil de {user.name}</h1>
-        <p>Email: {user.email}</p>
-        <p>Videos publicados: {user.videos?.length || 0}</p>
-      </div>
+      {showUpload && (
+        <form onSubmit={handleUploadSubmit} className="upload-form">
+          <h3>Subir Video a AWS S3</h3>
+          
+          <label>Título:</label>
+          <input 
+            type="text" 
+            required 
+            value={uploadData.title} 
+            onChange={(e) => setUploadData({...uploadData, title: e.target.value})} 
+          />
 
-      <hr />
+          <label>Descripción:</label>
+          <textarea 
+            required 
+            value={uploadData.description} 
+            onChange={(e) => setUploadData({...uploadData, description: e.target.value})} 
+          />
 
-      <div className="user-videos-section">
-        <div className="section-header">
-          <h2>Mis Videos</h2>
-          <button onClick={() => setShowUpload(!showUpload)}>
-            {showUpload ? 'Cancelar' : '+ Publicar Video'}
-          </button>
-        </div>
+          <label>Archivo de Video (MP4):</label>
+          <input 
+            type="file" 
+            accept="video/*" 
+            required 
+            onChange={(e) => setVideoFile(e.target.files[0])} 
+          />
 
-        {showUpload && (
-          <form onSubmit={handleUploadSubmit} className="upload-form">
-            <h3>Subir nuevo video</h3>
-            
-            <input 
-              type="text" 
-              placeholder="Título del video" 
-              value={uploadData.title}
-              onChange={(e) => setUploadData({...uploadData, title: e.target.value})}
-              required 
-            />
-            
-            <textarea 
-              placeholder="Descripción" 
-              value={uploadData.description}
-              onChange={(e) => setUploadData({...uploadData, description: e.target.value})}
-              required 
-            />
-            
-            <div className="file-inputs">
-              <label>Archivo de Video (MP4):</label>
-              <input 
-                type="file" 
-                accept="video/mp4" 
-                onChange={(e) => setVideoFile(e.target.files[0])} 
-                required 
-              />
+          <label>Miniatura (Imagen):</label>
+          <input 
+            type="file" 
+            accept="image/*" 
+            required 
+            onChange={(e) => setThumbFile(e.target.files[0])} 
+          />
 
-              <label>Miniatura (JPG, PNG):</label>
-              <input 
-                type="file" 
-                accept="image/jpeg, image/png" 
-                onChange={(e) => setThumbFile(e.target.files[0])} 
-                required 
-              />
-            </div>
+          <button type="submit">Subir a la Nube</button>
+        </form>
+      )}
 
-            <button type="submit" className="btn-submit">Guardar Video</button>
-          </form>
-        )}
-
-        <div className="video-list">
-          {user.videos?.length > 0 ? (
-            user.videos.map(video => (
-              <div key={video.id} className="video-item">
+      <div className="user-videos">
+        <h3>Tus Videos</h3>
+        {user.videos && user.videos.length > 0 ? (
+          <div className="videos-grid">
+            {user.videos.map(video => (
+              <div key={video.id} className="video-card">
+                <img src={video.thumbnail_url} alt={video.title} style={{ width: '100%', maxWidth: '300px' }} />
                 <h4>{video.title}</h4>
-                <p>{video.views} vistas</p>
-                <div className="video-actions">
-                  <button>Editar</button>
-                  <button className="delete-btn">Eliminar</button>
-                </div>
+                <p>{video.description}</p>
               </div>
-            ))
-          ) : (
-            <p>No has publicado ningún video todavía.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p>No has subido videos aún.</p>
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default Profile;
