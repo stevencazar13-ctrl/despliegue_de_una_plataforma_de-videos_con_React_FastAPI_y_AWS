@@ -1,165 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { API_URL } from '../api';
+import '../css/usuario.css'; 
 
-const Profile = () => {
+export default function Profile() {
   const [user, setUser] = useState(null);
-  const [showUpload, setShowUpload] = useState(false);
-  const [uploadData, setUploadData] = useState({ title: '', description: '' });
-  const [videoFile, setVideoFile] = useState(null);
-  const [thumbFile, setThumbFile] = useState(null);
+  const [userVideos, setUserVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchProfileData = async () => {
       const token = localStorage.getItem('token');
-      if (!token) return;
+      if (!token) {
+        navigate('/login');
+        return;
+      }
 
       try {
-        const res = await fetch(`${API_URL}/users/me`, {
+        const resUser = await fetch(`${API_URL}/users/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
+
+        if (resUser.ok) {
+          const userData = await resUser.json();
+          setUser(userData);
+
+          const resVideos = await fetch(`${API_URL}/videos`);
+          if (resVideos.ok) {
+            const allVideos = await resVideos.json();
+            
+            const filtrados = allVideos.filter(v => v.user_id === userData.id);
+            setUserVideos(filtrados);
+          }
+        } else {
+          localStorage.removeItem('token');
+          navigate('/login');
         }
       } catch (error) {
         console.error("Error cargando perfil:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchUser();
-  }, []);
 
-  const handleUploadSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    
-    if (!videoFile || !thumbFile) {
-      return alert('Por favor selecciona un video y una miniatura.');
-    }
+    fetchProfileData();
+  }, [navigate]);
 
-    try {
-      const videoUrlRes = await fetch(`${API_URL}/s3/presigned-url?filename=${videoFile.name}&file_type=${videoFile.type}&is_video=true`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const videoUrls = await videoUrlRes.json();
-
-      await fetch(videoUrls.upload_url, {
-        method: 'PUT',
-        headers: { 'Content-Type': videoFile.type },
-        body: videoFile
-      });
-
-      const thumbUrlRes = await fetch(`${API_URL}/s3/presigned-url?filename=${thumbFile.name}&file_type=${thumbFile.type}&is_video=false`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const thumbUrls = await thumbUrlRes.json();
-
-      await fetch(thumbUrls.upload_url, {
-        method: 'PUT',
-        headers: { 'Content-Type': thumbFile.type },
-        body: thumbFile
-      });
-
-      const res = await fetch(`${API_URL}/videos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: uploadData.title,
-          description: uploadData.description,
-          video_url: videoUrls.public_url,
-          thumbnail_url: thumbUrls.public_url,
-          user_id: user.id
-        })
-      });
-
-      if (res.ok) {
-        alert('¡Video publicado con éxito en AWS!');
-        setShowUpload(false);
-        setUploadData({ title: '', description: '' });
-        setVideoFile(null);
-        setThumbFile(null);
-        
-        const userRes = await fetch(`${API_URL}/users/me`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (userRes.ok) setUser(await userRes.json());
-      } else {
-        alert('Error al guardar el registro en la base de datos.');
-      }
-    } catch (error) {
-      console.error("Error al subir a S3:", error);
-      alert('Hubo un error en la subida. Verifica los permisos CORS de tus Buckets S3.');
-    }
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
-  if (!user) return <div>Cargando perfil...</div>;
+  if (loading) return <div>Cargando perfil...</div>;
+  if (!user) return <div>No se pudo cargar el perfil.</div>;
 
   return (
-    <div className="profile-container">
-      <h2>Perfil de {user.username}</h2>
-      <button onClick={() => setShowUpload(!showUpload)}>
-        {showUpload ? 'Cancelar Subida' : 'Subir Nuevo Video'}
-      </button>
+    <div className="profile-container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      
+      <nav className="navbar" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px' }}>
+        <Link to="/home" style={{ textDecoration: 'none', fontSize: '16px' }}>🏠 Volver al Inicio</Link>
+        <button onClick={handleLogout} style={{ cursor: 'pointer', padding: '8px 16px', background: '#ff4d4f', color: 'white', border: 'none', borderRadius: '4px' }}>
+          Cerrar Sesión
+        </button>
+      </nav>
 
-      {showUpload && (
-        <form onSubmit={handleUploadSubmit} className="upload-form">
-          <h3>Subir Video a AWS S3</h3>
-          
-          <label>Título:</label>
-          <input 
-            type="text" 
-            required 
-            value={uploadData.title} 
-            onChange={(e) => setUploadData({...uploadData, title: e.target.value})} 
-          />
+      <div className="user-info">
+        <h1 style={{ margin: '0 0 10px 0' }}>Perfil de {user.name}</h1>
+        <p style={{ color: '#666', margin: 0 }}>Correo: {user.email}</p>
+      </div>
 
-          <label>Descripción:</label>
-          <textarea 
-            required 
-            value={uploadData.description} 
-            onChange={(e) => setUploadData({...uploadData, description: e.target.value})} 
-          />
+      <hr style={{ margin: '30px 0', border: '1px solid #eee' }} />
 
-          <label>Archivo de Video (MP4):</label>
-          <input 
-            type="file" 
-            accept="video/*" 
-            required 
-            onChange={(e) => setVideoFile(e.target.files[0])} 
-          />
-
-          <label>Miniatura (Imagen):</label>
-          <input 
-            type="file" 
-            accept="image/*" 
-            required 
-            onChange={(e) => setThumbFile(e.target.files[0])} 
-          />
-
-          <button type="submit">Subir a la Nube</button>
-        </form>
-      )}
-
-      <div className="user-videos">
-        <h3>Tus Videos</h3>
-        {user.videos && user.videos.length > 0 ? (
-          <div className="videos-grid">
-            {user.videos.map(video => (
-              <div key={video.id} className="video-card">
-                <img src={video.thumbnail_url} alt={video.title} style={{ width: '100%', maxWidth: '300px' }} />
-                <h4>{video.title}</h4>
-                <p>{video.description}</p>
-              </div>
-            ))}
-          </div>
+      <h2>Tus Videos Publicados ({userVideos.length})</h2>
+      
+      <div className="videos-grid" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginTop: '20px' }}>
+        {userVideos.length > 0 ? (
+          userVideos.map((video) => (
+            <div key={video.id} className="video-card" style={{ width: '250px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px', transition: 'transform 0.2s' }}>
+              <Link to={`/video/${video.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <img 
+                  src={video.thumbnail_url} 
+                  alt={video.title} 
+                  style={{ width: '100%', height: '140px', objectFit: 'cover', borderRadius: '4px' }} 
+                />
+                <h3 style={{ fontSize: '16px', margin: '10px 0 5px 0' }}>{video.title}</h3>
+                <p style={{ fontSize: '12px', color: '#666', margin: 0 }}>
+                  {video.description ? video.description.substring(0, 50) + '...' : 'Sin descripción'}
+                </p>
+              </Link>
+            </div>
+          ))
         ) : (
-          <p>No has subido videos aún.</p>
+          <p style={{ color: '#666' }}>No has subido videos aún. ¡Anímate a publicar el primero!</p>
         )}
       </div>
     </div>
   );
-};
-
-export default Profile;
+}

@@ -9,6 +9,8 @@ export default function Player() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
+  
+  const [recomendados, setRecomendados] = useState([]);
 
   useEffect(() => {
     const fetchVideoDetails = async () => {
@@ -23,6 +25,13 @@ export default function Player() {
         if (commentsRes.ok) {
           const commentsData = await commentsRes.json();
           setComments(commentsData);
+        }
+
+        const allVideosRes = await fetch(`${API_URL}/videos`);
+        if (allVideosRes.ok) {
+          const allVideosData = await allVideosRes.json();
+          const filtrados = allVideosData.filter(v => v.id !== Number(id));
+          setRecomendados(filtrados.slice(0, 5));
         }
       } catch (error) {
         console.error("Error al cargar detalles:", error);
@@ -64,48 +73,77 @@ export default function Player() {
 
   return (
     <div className="player-container">
-      <nav className="navbar">
-        <Link to="/home">Volver al Inicio</Link>
+      <nav className="navbar player-navbar">
+        <Link to="/home" className="back-link">Volver al Inicio</Link>
       </nav>
 
-      <main className="video-section">
-        <video controls width="100%" className="main-video" src={video.video_url}>
-          Tu navegador no soporta HTML5 video.
-        </video>
+      <div className="player-layout">
         
-        <div className="video-details">
-          <h2>{video.title}</h2>
-          <p className="views-date">{video.views} vistas</p>
-          <div className="description-box">
-            <p>{video.description}</p>
-          </div>
-        </div>
-
-        <hr />
-
-        <div className="comments-section">
-          <h3>Comentarios ({comments.length})</h3>
+        <main className="video-section">
+          <video controls className="main-video" src={video.video_url}>
+            Tu navegador no soporta HTML5 video.
+          </video>
           
-          <form onSubmit={handleCommentSubmit} className="comment-form">
-            <input 
-              type="text" 
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Añade un comentario..."
-              required 
-            />
-            <button type="submit">Comentar</button>
-          </form>
-
-          <div className="comments-list">
-            {comments.map((c, index) => (
-              <div key={index} className="comment-item">
-                <p><strong>Usuario {c.user_id}:</strong> {c.content}</p>
-              </div>
-            ))}
+          <div className="video-details">
+            <h2>{video.title}</h2>
+            <p className="views-date">{video.views || 0} vistas</p>
+            <div className="description-box">
+              <p>{video.description}</p>
+            </div>
           </div>
-        </div>
-      </main>
+
+          <hr />
+
+          <div className="comments-section">
+            <h3>Comentarios ({comments.length})</h3>
+            
+            <form onSubmit={handleCommentSubmit} className="comment-form">
+              <input 
+                type="text" 
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Añade un comentario..."
+                required 
+              />
+              <button type="submit">Comentar</button>
+            </form>
+
+            <div className="comments-list">
+              {comments.map((c, index) => (
+                <div key={index} className="comment-item">
+                  <p>
+                    <strong>{c.user?.name || "Tú"}:</strong> {c.content}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </main>
+
+        <aside className="recommended-section">
+          <h3>Videos Recomendados</h3>
+          {recomendados.length > 0 ? (
+            recomendados.map((vid) => (
+              <div key={vid.id} className="recommendation-card">
+                <Link to={`/video/${vid.id}`} className="recommendation-link">
+                  <img 
+                    src={vid.thumbnail_url} 
+                    alt={vid.title} 
+                    className="recommendation-thumbnail"
+                  />
+                  <div className="recommendation-info">
+                    <h4 className="recommendation-title">{vid.title}</h4>
+                    <p className="recommendation-views">{vid.views || 0} vistas</p>
+                  </div>
+                </Link>
+              </div>
+            ))
+          ) : (
+            <p className="recommended-empty">No hay recomendaciones disponibles.</p>
+          )}
+        </aside>
+
+      </div>
     </div>
   );
 }

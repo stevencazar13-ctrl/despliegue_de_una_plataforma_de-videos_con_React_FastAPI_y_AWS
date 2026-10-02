@@ -1,12 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+@import './App.css';
+@import './css/style.css';
+
 :root {
-  font-family: 'Segoe UI', Roboto, sans-serif;
-  color: #202124;
-  background: #f7f8fa;
+  font-family: 'DM Sans', sans-serif;
+  color: #192d49;
+  background: #f3f8fb;
   color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --brand-navy: #142d59;
+  --brand-blue: #155b9e;
+  --brand-teal: #00aeba;
+  --brand-orange: #ff922e;
+  --brand-pink: #c52991;
+  --ink: #192d49;
+  --muted: #6f8195;
+  --line: #dce7ef;
+  --surface: #ffffff;
+  --page: #f3f8fb;
+  --shadow: 0 12px 32px rgba(20, 45, 89, 0.08);
 }
 
 * {
@@ -17,7 +33,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.55;
+  background: var(--page);
 }
 
 button,
@@ -37,8 +54,8 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid rgba(26, 115, 232, 0.35);
-  outline-offset: 2px;
+  outline: 3px solid rgba(0, 174, 186, 0.3);
+  outline-offset: 3px;
 }
 
 #root {
@@ -53,7 +70,14 @@ p {
   margin-top: 0;
 }
 
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Manrope', 'DM Sans', sans-serif;
+}
+
 ::selection {
   color: #fff;
-  background: #1769c2;
+  background: var(--brand-blue);
 }

@@ -21,64 +21,65 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (isLogin) {
-      try {
-        const loginData = new URLSearchParams();
-        loginData.append('username', formData.email);
-        loginData.append('password', formData.password);
+  e.preventDefault();
+  
+  if (isLogin) {
+    try {
+      const loginData = new URLSearchParams();
+      loginData.append('username', formData.email);
+      loginData.append('password', formData.password);
 
-        const response = await fetch(`${API_URL}/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: loginData
-        });
+      const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: loginData
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem('token', data.access_token);
-          navigate('/home'); 
-        } else {
-          const errorData = await response.json();
-          alert(`Error al iniciar sesión: ${errorData.detail}`);
-        }
-      } catch (error) {
-        console.error('Error de conexión:', error);
-        alert('Error al conectar con el servidor FastAPI.');
+      if (response.ok) {
+        const data = await response.json();
+        
+        localStorage.setItem('token', data.access_token);
+        
+        navigate('/home'); 
+      } else {
+        const errorData = await response.json();
+        alert(`Error al iniciar sesión: ${errorData.detail}`);
       }
-    } else {
-      try {
-        const response = await fetch(`${API_URL}/users`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password
-          })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          alert(`¡Cuenta creada con éxito para ${data.name}! Por favor, inicia sesión.`);
-          setFormData({ name: '', email: '', password: '' });
-          setIsLogin(true); 
-        } else {
-          const errorData = await response.json();
-          alert(`Error al registrar: ${errorData.detail || 'Revisa los datos'}`);
-        }
-      } catch (error) {
-        console.error('Error de conexión:', error);
-        alert('Error al conectar con el servidor FastAPI.');
-      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      alert('Error al conectar con el servidor FastAPI.');
     }
-  };
+  } else {
+    try {
+      const response = await fetch(`${API_URL}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        })
+      });
 
+      if (response.ok) {
+        const data = await response.json();
+        alert(`¡Cuenta creada con éxito para ${data.name}! Por favor, inicia sesión.`);
+        setFormData({ name: '', email: '', password: '' });
+        setIsLogin(true); 
+      } else {
+        const errorData = await response.json();
+        alert(`Error al registrar: ${errorData.detail || 'Revisa los datos'}`);
+      }
+    } catch (error) {
+      console.error('Error de conexión:', error);
+      alert('Error al conectar con el servidor FastAPI.');
+    }
+  }
+};
   return (
     <div className="login-container">
       <div className="login-box">

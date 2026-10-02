@@ -1,242 +1,256 @@
 .profile-container {
-  background-color: #f9f9f9;
   min-height: 100vh;
+  padding: 48px max(20px, calc((100% - 1040px) / 2)) 72px;
+  background:
+    linear-gradient(135deg, rgba(0, 174, 186, 0.075), transparent 38%),
+    var(--page);
+}
+
+.profile-container > h2 {
+  margin-bottom: 18px;
+  color: var(--brand-navy);
+  font-size: clamp(1.65rem, 3vw, 2.1rem);
+  font-weight: 800;
+}
+
+.profile-container > button,
+.section-header button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 5px;
+  background: var(--brand-blue);
+  color: #fff;
+  font-weight: 700;
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.profile-container > button:hover,
+.section-header button:hover {
+  transform: translateY(-1px);
+  background: var(--brand-navy);
 }
 
 .logout-btn {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--brand-teal);
+  border-radius: 5px;
   background: transparent;
-  color: #065fd4;
-  border: 1px solid #065fd4;
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
+  color: var(--brand-blue);
+  font-weight: 700;
 }
 
 .logout-btn:hover {
-  background: #def1ff;
-}
-
-.profile-header {
-  text-align: center;
-  padding: 40px 20px;
-  background-color: white;
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.profile-header h1 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.profile-header p {
-  color: #606060;
-  font-size: 1.1rem;
-}
-
-.user-videos-section {
-  max-width: 1000px;
-  margin: 30px auto;
-  padding: 0 20px;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.section-header button {
-  background-color: #0f0f0f;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: 500;
+  background: #e7f7f7;
 }
 
 .upload-form {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 13px;
+  margin: 22px 0 38px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--brand-teal);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: var(--shadow);
 }
 
 .upload-form h3 {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
+  margin-bottom: 4px;
+  color: var(--brand-navy);
+  font-size: 1.2rem;
 }
 
-.upload-form input[type="text"], 
+.upload-form label {
+  margin-top: 3px;
+  color: #53677e;
+  font-size: 0.89rem;
+  font-weight: 700;
+}
+
+.upload-form input[type='text'],
 .upload-form textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #fbfdfe;
+  color: var(--ink);
+}
+
+.upload-form textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+
+.upload-form input[type='file'] {
+  width: 100%;
+  padding: 9px;
+  border: 1px dashed #b9ccd9;
+  border-radius: 5px;
+  background: #f4fafb;
+  color: var(--muted);
+}
+
+.upload-form input:focus,
+.upload-form textarea:focus {
+  border-color: var(--brand-teal);
+  outline: 3px solid rgba(0, 174, 186, 0.12);
+}
+
+.upload-form > button {
+  min-height: 44px;
+  align-self: flex-end;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 5px;
+  background: linear-gradient(105deg, var(--brand-blue), var(--brand-teal));
+  color: #fff;
+  font-weight: 800;
+}
+
+.upload-form > button:hover {
+  filter: brightness(0.94);
+}
+
+.user-videos {
+  margin-top: 42px;
+}
+
+.user-videos > h3 {
+  margin-bottom: 18px;
+  color: var(--brand-navy);
+  font-size: 1.35rem;
+}
+
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
+  gap: 18px;
+}
+
+.videos-grid .video-card {
+  overflow: hidden;
+  padding-bottom: 14px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(20, 45, 89, 0.055);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.videos-grid .video-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.videos-grid .video-card img {
+  display: block;
+  width: 100% !important;
+  max-width: none !important;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 13px;
+  background: #dce8ef;
+  object-fit: cover;
+}
+
+.videos-grid .video-card h4,
+.videos-grid .video-card p {
+  margin-right: 14px;
+  margin-left: 14px;
+}
+
+.videos-grid .video-card h4 {
+  margin-bottom: 5px;
+  color: var(--brand-navy);
   font-size: 1rem;
 }
 
-.upload-form textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.file-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  border: 1px dashed #ccc;
-}
-
-.file-inputs label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
+.videos-grid .video-card p {
+  margin-bottom: 0;
+  color: var(--muted);
   font-size: 0.9rem;
-  color: #333;
 }
 
 .video-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-}
-
-.video-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 16px 20px;
-  border-radius: 8px;
-  border: 1px solid #e5e5e5;
-}
-
-.video-item h4 {
-  font-size: 1.1rem;
-  margin: 0;
-  flex: 1;
-}
-
-.video-item p {
-  color: #606060;
-  margin-right: 20px;
-}
-
-.video-actions {
-  display: flex;
   gap: 12px;
 }
 
-.video-actions button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  background: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.video-actions .delete-btn {
-  color: #cc0000;
-  border-color: #cc0000;
-}
-
-.video-actions .delete-btn:hover {
-  background: #ffebee;
-}
-
-.profile-container {
-  background-color: #f5f7fa;
-}
-
-.profile-header {
-  background: linear-gradient(120deg, #fff 0%, #f3f7fb 100%);
-  border-bottom-color: #e5eaf0;
-}
-
-.profile-header h1 {
-  color: #202b3c;
-}
-
-.section-header button {
-  background-color: #1769c2;
-  border-radius: 8px;
-}
-
-.upload-form {
-  border-color: #e5e9ef;
-  box-shadow: 0 4px 16px rgba(24, 39, 75, 0.05);
-}
-
-.upload-form input[type="text"],
-.upload-form textarea {
-  border-color: #d8dee8;
-}
-
-.upload-form input[type="text"]:focus,
-.upload-form textarea:focus {
-  border-color: #1769c2;
-  outline: 3px solid rgba(23, 105, 194, 0.1);
-}
-
-.upload-form .btn-submit {
-  width: auto;
-  margin-top: 0;
-  border-radius: 8px;
-  background-color: #1769c2;
-}
-
-.upload-form .btn-submit:hover {
-  background-color: #12559d;
-}
-
-.file-inputs {
-  background: #f6f8fb;
-  border-color: #c7d0dc;
-}
-
 .video-item {
-  border-color: #e5e9ef;
-  box-shadow: 0 2px 8px rgba(24, 39, 75, 0.04);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 18px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  transition: box-shadow 160ms ease, transform 160ms ease;
 }
 
 .video-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 7px 18px rgba(24, 39, 75, 0.09);
+  box-shadow: var(--shadow);
+}
+
+.video-item h4,
+.video-item p {
+  margin: 0;
+}
+
+.video-item h4 {
+  flex: 1;
+  color: var(--brand-navy);
+}
+
+.video-item p {
+  color: var(--muted);
+}
+
+.video-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.video-actions button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  font-weight: 700;
+}
+
+.video-actions .delete-btn {
+  border-color: #efc5c9;
+  color: #a53340;
+}
+
+.video-actions .delete-btn:hover {
+  background: #fff0f1;
 }
 
 @media (max-width: 640px) {
-  .profile-header {
-    padding: 32px 16px;
+  .profile-container {
+    padding: 32px 16px 52px;
   }
 
-  .section-header,
+  .upload-form {
+    padding: 18px;
+  }
+
   .video-item {
     align-items: flex-start;
     flex-direction: column;
-    gap: 14px;
-  }
-
-  .video-item p {
-    margin-right: 0;
   }
 
   .video-actions {
     width: 100%;
-  }
-
-  .upload-form {
-    padding: 22px;
   }
 }

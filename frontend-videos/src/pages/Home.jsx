@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../api';
+import logo from '../assets/images/Logo.png';
+import homeImg from '../assets/images/Home.png';
+import profileImg from '../assets/images/Profile.png';
 import '../css/home.css';
 
 export default function Home() {
@@ -27,10 +30,10 @@ export default function Home() {
   return (
     <div className="home-container">
       <nav className="navbar">
-        <img src="/logo.jpeg" alt="Logo" className="logo" />
+        <img src={logo} alt="Logo" />
         <div className="nav-links">
-          <Link to="/home"><img src="/Home.png" alt="Inicio" /> Inicio</Link>
-          <Link to="/profile"><img src="/Tableros.png" alt="Perfil" /> Mi Perfil</Link>
+          <Link to="/home"><img src={homeImg} alt="Inicio" /> Inicio</Link>
+          <Link to="/profile"><img src={profileImg} alt="Perfil" /> Mi Perfil</Link>
         </div>
       </nav>
 
