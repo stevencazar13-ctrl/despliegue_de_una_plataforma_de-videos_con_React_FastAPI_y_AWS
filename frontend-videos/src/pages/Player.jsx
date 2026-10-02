@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { API_URL } from '../api';
 import '../css/detalle.css';
 
 export default function Player() {
@@ -12,13 +13,13 @@ export default function Player() {
   useEffect(() => {
     const fetchVideoDetails = async () => {
       try {
-        const videoRes = await fetch(`http://localhost:8000/videos/${id}`);
+        const videoRes = await fetch(`${API_URL}/videos/${id}`);
         if (videoRes.ok) {
           const videoData = await videoRes.json();
           setVideo(videoData);
         }
 
-        const commentsRes = await fetch(`http://localhost:8000/videos/${id}/comments`);
+        const commentsRes = await fetch(`${API_URL}/videos/${id}/comments`);
         if (commentsRes.ok) {
           const commentsData = await commentsRes.json();
           setComments(commentsData);
@@ -39,7 +40,7 @@ export default function Player() {
     if (!token) return alert('Debes iniciar sesión para comentar');
 
     try {
-      const res = await fetch(`http://localhost:8000/videos/${id}/comments`, {
+      const res = await fetch(`${API_URL}/videos/${id}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

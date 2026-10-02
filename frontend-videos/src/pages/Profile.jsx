@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../api';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -13,7 +14,7 @@ const Profile = () => {
       if (!token) return;
 
       try {
-        const res = await fetch('http://localhost:8000/users/me', {
+        const res = await fetch(`${API_URL}/users/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (res.ok) {
@@ -36,7 +37,7 @@ const Profile = () => {
     }
 
     try {
-      const videoUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${videoFile.name}&file_type=${videoFile.type}&is_video=true`, {
+      const videoUrlRes = await fetch(`${API_URL}/s3/presigned-url?filename=${videoFile.name}&file_type=${videoFile.type}&is_video=true`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const videoUrls = await videoUrlRes.json();
@@ -47,7 +48,7 @@ const Profile = () => {
         body: videoFile
       });
 
-      const thumbUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${thumbFile.name}&file_type=${thumbFile.type}&is_video=false`, {
+      const thumbUrlRes = await fetch(`${API_URL}/s3/presigned-url?filename=${thumbFile.name}&file_type=${thumbFile.type}&is_video=false`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const thumbUrls = await thumbUrlRes.json();
@@ -58,7 +59,7 @@ const Profile = () => {
         body: thumbFile
       });
 
-      const res = await fetch('http://localhost:8000/videos', {
+      const res = await fetch(`${API_URL}/videos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ const Profile = () => {
         setVideoFile(null);
         setThumbFile(null);
         
-        const userRes = await fetch('http://localhost:8000/users/me', {
+        const userRes = await fetch(`${API_URL}/users/me`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         if (userRes.ok) setUser(await userRes.json());

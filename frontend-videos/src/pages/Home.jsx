@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { API_URL } from '../api';
 import '../css/home.css';
 
 export default function Home() {
@@ -8,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch('http://localhost:8000/videos');
+        const response = await fetch(`${API_URL}/videos`);
         if (response.ok) {
           const data = await response.json();
           setVideos(data);

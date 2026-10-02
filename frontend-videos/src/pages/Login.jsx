@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../api';
 import '../css/login.css';
 
 export default function Login() {
@@ -28,7 +29,7 @@ export default function Login() {
         loginData.append('username', formData.email);
         loginData.append('password', formData.password);
 
-        const response = await fetch('http://localhost:8000/login', {
+        const response = await fetch(`${API_URL}/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -50,7 +51,7 @@ export default function Login() {
       }
     } else {
       try {
-        const response = await fetch('http://localhost:8000/users', {
+        const response = await fetch(`${API_URL}/users`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

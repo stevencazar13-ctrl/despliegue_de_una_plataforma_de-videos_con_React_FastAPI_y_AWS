@@ -77,14 +77,22 @@ class CommentCreate(BaseModel):
 
 app = FastAPI(title="API Plataforma de Videos")
 
+region = os.getenv("AWS_REGION", "us-east-1")
+
+origins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    f"http://steve-frontend-videos.s3-website-{region}.amazonaws.com",
+    "http://steve-frontend-videos.s3-website.us-east-1.amazonaws.com"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174"], 
+    allow_origins=["*"], # Permite todo temporalmente para diagnosticar
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 os.makedirs("uploads/videos", exist_ok=True)
 os.makedirs("uploads/thumbnails", exist_ok=True)
 app.mount("/static", StaticFiles(directory="uploads"), name="static")
