@@ -43,9 +43,9 @@ export default function Profile() {
     }
 
     try {
-      const videoUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${videoFile.name}&file_type=${videoFile.type}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const videoUrlRes = await fetch(`http://localhost:8000/s3/presigned-url?filename=${videoFile.name}&file_type=${videoFile.type}&is_video=true`, {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
       const videoUrls = await videoUrlRes.json();
 
       await fetch(videoUrls.upload_url, {

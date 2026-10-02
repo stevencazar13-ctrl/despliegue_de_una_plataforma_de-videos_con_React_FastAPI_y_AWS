@@ -75,9 +75,6 @@ class VideoUpdate(BaseModel):
 class CommentCreate(BaseModel):
     content: str
 
-# ==========================================
-# 3. CONFIGURACIÓN DE FASTAPI
-# ==========================================
 app = FastAPI(title="API Plataforma de Videos")
 
 app.add_middleware(
@@ -97,14 +94,10 @@ def on_startup():
     create_db_and_tables()
 
 @app.get("/s3/presigned-url")
-def get_s3_presigned_url(filename: str, file_type: str, current_user: User = Depends(get_current_user)):
-    """
-    Entrega una URL pre-firmada al usuario autenticado.
-    """
-    urls = generate_presigned_url(filename, file_type)
+def get_s3_presigned_url(filename: str, file_type: str, is_video: bool, current_user: User = Depends(get_current_user)):
+    urls = generate_presigned_url(filename, file_type, is_video)
     if not urls:
         raise HTTPException(status_code=500, detail="Error al comunicarse con S3")
-    
     return urls
 
 @app.post("/users", response_model=User)
